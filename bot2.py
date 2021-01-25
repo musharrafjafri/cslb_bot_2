@@ -48,10 +48,22 @@ for num in range(len(city)):
         selection.select_by_visible_text(lic_type[num])
         driver.find_element_by_name('ctl00$MainContent$btnZipCodeSearch').click()
         sleep(1)
-        source = pd.read_html(driver.page_source)
-        table = source[0]
-        lic_col = table['License #'].drop([25, 26])
-        print(lic_col)
+        driver.find_element_by_xpath('//*[@id="MainContent_gvZipCodeSearch"]/tbody/tr[27]/td/table/tbody/tr/td[12]/a').click()
+        sleep(3)
+        page_num_class = driver.find_element_by_class_name('GridPager')
+        page_nums = []
+        last_page_num = ''
+        for num in page_num_class.find_elements_by_tag_name('span'):
+            page_nums.append(num.text)
+        last_page_num = page_nums.pop()
+        print(last_page_num)
+        for i in range(1, (int(last_page_num)+1)):
+            print(i)
+        
+        # source = pd.read_html(driver.page_source)
+        # table = source[0]
+        # lic_col = table['License #'].drop([25, 26])
+        # print(lic_col)
 
     except:
         driver.close()
