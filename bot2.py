@@ -47,30 +47,58 @@ for num in range(len(city)):
         selection = Select(driver.find_element_by_name('ctl00$MainContent$ddlLicenseType'))
         selection.select_by_visible_text(lic_type[num])
         driver.find_element_by_name('ctl00$MainContent$btnZipCodeSearch').click()
-        sleep(1)
-        driver.find_element_by_xpath('//*[@id="MainContent_gvZipCodeSearch"]/tbody/tr[27]/td/table/tbody/tr/td[12]/a').click()
-        sleep(3)
+        sleep(2)
         page_num_class = driver.find_element_by_class_name('GridPager')
-        page_nums = []
         last_page_num = ''
-        for num in page_num_class.find_elements_by_tag_name('span'):
-            page_nums.append(num.text)
-        last_page_num = page_nums.pop()
-        print(last_page_num)
-        for i in range(1, (int(last_page_num)+1)):
-            print(i)
-        
+        page_nums = []
+
+        try:
+            for np_link in page_num_class.find_elements_by_tag_name('a'):
+                print('np_link text: ',np_link.text)
+                for np_link_span in page_num_class.find_elements_by_tag_name('span'):
+                    print('CP1')
+                    if int(np_link.text) in range(1, 50) and int(np_link.text) > int(np_link_span.text):
+                        print('CP2')
+                        np_link.click()
+                        print('CP3')
+                        break
+                        print('CP4')
+                        # sleep(10)
+                    # elif np_link.text == '...':
+                print('CP_loop')    
+                sleep(1)
+                    # print('np_link spans: ', np_link_span.text)
+
+                # if np_link.text == '>>':
+                    # np_link.click()
+                    # sleep(20)
+                    # for num in page_num_class.find_elements_by_tag_name('span'):
+                    #     last_page_num = num.text
+                    # sleep(2)
+                    # page_num_class.find_element_by_tag_name('td').find_element_by_tag_name('a').click()
+                    # sleep(10)
+
+            # print('last page number: ', last_page_num)
+        except:
+            print('except block')
+            # for num in page_num_class.find_elements_by_tag_name('a'):
+            #     page_nums.append(num.text)
+            # last_page_num = page_nums.pop()
+            # print('last page number: ', last_page_num)
+
+        # for i in range(1, (int(last_page_num)+1)):
+        #     print(i)
+        # driver.close()
         # source = pd.read_html(driver.page_source)
         # table = source[0]
         # lic_col = table['License #'].drop([25, 26])
         # print(lic_col)
-
     except:
         driver.close()
         print(city[num], ' with ', lic_type[num], 'is wrong.')
         wrong_city.append(city[num])
         # wrong_lic_type.append(lic_type[num])
-    break
+
 with open('wrong_input/wrong_inputs.txt', 'w') as w_in:
     for i in range(len(wrong_city)):
         w_in.write(f'{wrong_city[i]}, ')
