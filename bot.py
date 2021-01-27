@@ -57,7 +57,6 @@ for num in range(len(city)):
         for i in range(len(wrong_city)):
             w_in.write(f'{wrong_city[i]}, ')
 
-    # try:
     prev_id = pd.read_html(driver.page_source)[0]['License #'][0]
     after_id = pd.read_html(driver.page_source)[0]['License #'][0]
     page_num_class = driver.find_element_by_class_name('GridPager').find_element_by_tag_name('td')
@@ -75,11 +74,6 @@ for num in range(len(city)):
                 td_texts_list.clear()
                 for np_link in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('td'):
                     td_texts_list.append(np_link.text)
-                # if a_tag.text == '<<':
-                #     a_tag.click()
-                #     while prev_id == after_id:
-                #         sleep(1)
-                #         after_id = pd.read_html(driver.page_source)[0]['License #'][0]
                 break
     else:
         for np_link in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('td'):
@@ -98,24 +92,39 @@ for num in range(len(city)):
         lic_nums_list.append(list(pd.read_html(driver.page_source)[0]['License #']))
         try:
             for a in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('a'):
-                if int(a.text) > page_num:
-                    a.click()
-                    while prev_id == after_id:
-                        sleep(1)
-                        after_id = pd.read_html(driver.page_source)[0]['License #'][0]
-                    break
+                try:
+                    if int(a.text) > page_num:
+                        a.click()
+                        while prev_id == after_id:
+                            sleep(1)
+                            after_id = pd.read_html(driver.page_source)[0]['License #'][0]
+                        break
+                except:
+                    if a.text == '...':
+                        print('CP2')
+                        next_page_link = a.get_attribute('href')
+                        page_text = next_page_link[61:69]
+                        print('CP3')
+                        if str(page_num) in page_text:
+                            a.click()
+                            print('CP4')
+                            while prev_id == after_id:
+                                print('while cp')
+                                sleep(1)
+                                after_id = pd.read_html(driver.page_source)[0]['License #'][0]
+                            break
             prev_id = after_id
         except:
             print('except block.')
 
-    for i in range(len(lic_nums_list)):
-        print(lic_nums_list[i])
-        for num in lic_nums_list[i]:
-            try:
-                if len(num) > 1:
-                    all_lic_nums.append(int(num))
-            except:
-                pass
-    print(all_lic_nums)
-    print('Length: ', len(all_lic_nums))
+    # for i in range(len(lic_nums_list)):
+    #     print(lic_nums_list[i])
+    #     for num in lic_nums_list[i]:
+    #         try:
+    #             if len(num) > 1:
+    #                 all_lic_nums.append(int(num))
+    #         except:
+    #             pass
+    # print(all_lic_nums)
+    # print('Length: ', len(all_lic_nums))
 print('                       BOT END...')
