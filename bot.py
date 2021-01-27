@@ -5,23 +5,31 @@ from selenium import webdriver
 from selenium.webdriver.support.select import Select
 
 print('                       BOT STARTED...')
-city = []
+city_low = []
 lic_type = []
+city = []
+d_path = ''
+with open('res_files_path.txt') as file:
+    d_path = file.read()
 
 workbook = xlrd.open_workbook('input_data/input_data.xlsx')
 sheet = workbook.sheet_by_index(0)
 
 for row in range(sheet.nrows):
-    city.append(sheet.cell_value(row, 0))
+    city_low.append(sheet.cell_value(row, 0))
     lic_type.append(sheet.cell_value(row, 1))
 
+for citi in city_low:
+    city.append(citi.upper())
+
+print(city)
 
 wrong_city = []
 for num in range(len(city)):
     options = webdriver.ChromeOptions()
     # options.add_argument("--headless")
     options.add_argument('start-maximized')
-    preferances = {"download.default_directory": r"C:\Users\smmj1\OneDrive\Python Projects\cslb_bot-2\res_files"}
+    preferances = {"download.default_directory": d_path}
     options.add_experimental_option("prefs", preferances)
     options.add_experimental_option("useAutomationExtension", False)
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -97,4 +105,4 @@ for num in range(len(city)):
                 w_in.write(f'{wrong_city[i]}, ')
 
     driver.close()
-print('                       BOT END...')
+print('                       Files generated successfully...')
