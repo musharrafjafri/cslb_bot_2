@@ -62,7 +62,7 @@ for num in range(len(city)):
     after_id = pd.read_html(driver.page_source)[0]['License #'][0]
     page_num_class = driver.find_element_by_class_name('GridPager').find_element_by_tag_name('td')
     td_texts_list = []
-    for np_link in page_num_class.find_elements_by_tag_name('td'):
+    for np_link in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('td'):
         td_texts_list.append(np_link.text)
     if td_texts_list.pop() == '>>':
         for a_tag in page_num_class.find_elements_by_tag_name('a'):
@@ -72,29 +72,50 @@ for num in range(len(city)):
                     sleep(1)
                     after_id = pd.read_html(driver.page_source)[0]['License #'][0]
                 sleep(1)
+                td_texts_list.clear()
                 for np_link in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('td'):
-                    td_texts_list.clear()
                     td_texts_list.append(np_link.text)
+                # if a_tag.text == '<<':
+                #     a_tag.click()
+                #     while prev_id == after_id:
+                #         sleep(1)
+                #         after_id = pd.read_html(driver.page_source)[0]['License #'][0]
                 break
     else:
-        pass
-    print(td_texts_list.pop())
-        # for np_link_span in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('span'):
-        #     if int(np_link.text) in range(1, 50) and int(np_link.text) > int(np_link_span.text):
-        #         print('np_link:', np_link.text)
-        #         np_link.click()
-        #         while prev_id == after_id:
-        #             sleep(1)
-        #             after_id = pd.read_html(driver.page_source)[0]['License #'][0]
-        #         print('prev_id: ', prev_id)
-        #         print('after_id: ', after_id)
-        #         print('page changes.')
-        #         # print('np_link:', np_link.text)
-        #         break
-    # except:
+        for np_link in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('td'):
+            td_texts_list.append(np_link.text)
 
-    #     print('except block.')
+    driver.find_element_by_class_name('GridPager').find_element_by_tag_name('tr').find_element_by_tag_name('td').click()
+    while prev_id != after_id:
+        sleep(1)
+        after_id = pd.read_html(driver.page_source)[0]['License #'][0]
 
+    max_page = td_texts_list.pop()
+    lic_nums_list = []
+    all_lic_nums = []
+    for page_num in range(1, (int(max_page)+1)):
+        print('loop no.', page_num)
+        lic_nums_list.append(list(pd.read_html(driver.page_source)[0]['License #']))
+        try:
+            for a in driver.find_element_by_class_name('GridPager').find_elements_by_tag_name('a'):
+                if int(a.text) > page_num:
+                    a.click()
+                    while prev_id == after_id:
+                        sleep(1)
+                        after_id = pd.read_html(driver.page_source)[0]['License #'][0]
+                    break
+            prev_id = after_id
+        except:
+            print('except block.')
 
-    # driver.close()
+    for i in range(len(lic_nums_list)):
+        print(lic_nums_list[i])
+        for num in lic_nums_list[i]:
+            try:
+                if len(num) > 1:
+                    all_lic_nums.append(int(num))
+            except:
+                pass
+    print(all_lic_nums)
+    print('Length: ', len(all_lic_nums))
 print('                       BOT END...')
