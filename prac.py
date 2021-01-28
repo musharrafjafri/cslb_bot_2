@@ -1,43 +1,23 @@
-import pandas as pd
-import openpyxl
-import xlrd
-from xlwt import Workbook
+from time import sleep  # sleep/wait is use to apply wait to load all the attributes in browser.
+from selenium import webdriver  # It is out main library to make automation through python language.
+from selenium.webdriver.support.select import Select
 
-str = ['hey','buddy','you']
-print(str)
-city_upp = []
-for stri in str:
-        city_upp.append(stri.upper())
-print(city_upp)
+options = webdriver.ChromeOptions()
+# options.add_argument("--headless")
+options.add_argument('start-maximized')
+options.add_experimental_option("useAutomationExtension", False)
+options.add_experimental_option("excludeSwitches", ["enable-automation"])
+driver = webdriver.Chrome(options=options)
+driver.maximize_window()  # to open chrome in maximaze mode.
+driver.get("https://cslb.ca.gov/OnlineServices/CheckLicenseII/ZipCodeSearch.aspx")  # Giving url to open in chrome browser.
 
-# wb  = Workbook()
-# sheet1 = wb.add_sheet('Sheet 1')
-#
-# for i in range(20):
-#         sheet1.write(i, 0, f'da11{i}')
-#         sheet1.write(i, 1, f'da22{i+3}')
-#
-# wb.save('test.xls')
-# city = 'ESCONDIDO'
-# location = 'input_data/Contractor List.xlsx'
-# workbook = xlrd.open_workbook(location)
-# sheet = workbook.sheet_by_index(0)
-# file_city = sheet.cell_value(8, 2)
-#
-# num = 0
-# lic = ['2323', '23245']
-#
-# print(f'https://cslb.ca.gov/OnlineServices/CheckLicenseII/LicenseDetail.aspx?LicNum={int(lic[1])}')
+for item in driver.find_element_by_name('ctl00$MainContent$ddlLicenseType').find_elements_by_tag_name('option'):
+    print(item.text)
 
-# while city != file_city:
-#     location = f"input_data/Contractor List ({num + 1}).xlsx"
-#     workbook = xlrd.open_workbook(location)
-#     sheet = workbook.sheet_by_index(0)
-#     file_city = sheet.cell_value(8, 2)
-#     num += 1
-# lic = []
-# for row in range(sheet.nrows):
-#     if row > 7:
-#         lic.append(sheet.cell_value(row, 5))
-# for item in range(1, (len(lic)+1)):
-#     print(item)
+
+# selection = Select(driver.find_element_by_name('ctl00$MainContent$ddlLicenseType'))  # Getting all options of license type from list.
+#   # Selecting our desired license type from option's list
+# driver.find_element_by_name('ctl00$MainContent$btnZipCodeSearch').click()  # Click on selected license type.
+# sleep(1)  # wait 1 second to load page.
+# driver.find_element_by_name('ctl00$MainContent$ibExportToExcell').click()  # Click on button to go to result.
+# sleep(5)  # wait 5 second to wait page until file download.
